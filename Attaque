@@ -1,0 +1,56 @@
+/// Cette fonction remplace le tradtionnel useWeapon(leek) dans le cas des armes de zones, comme le lance grenade
+/// mais marche avec toutes les armes. Elle utilise les critères suivants- en priorité on privilégie le fait de faire mal
+/// à plusieurs ennemis.. puis si c'est pas possible, de visé sur la cellule de l'ennemi, puis si se n'est toujours pas
+/// possible, de leur faire mal avec la zone d'effet.
+/// Je sais, c'est dégeux et pas opti xD mais je vous la partage quand même :)
+
+
+function Attaque(x) {
+// Déclaration des compteurs
+var j = 0;
+// Déclaration des tableaux
+var WeaponRange = [];
+var Targettmp = [];
+// Déclaration des variables
+var moi = getLeek();
+var Cmoi = getCell();
+var monEnnemi = x;
+var CmonEnnemi = getCell(monEnnemi);
+var NearestNearestEnnemi = getNearestEnemyTo(monEnnemi);
+var CNearestNearestEnnemi = getCell(NearestNearestEnnemi);
+var Target = CmonEnnemi;
+// Toutes les cellules sur lesquelles je peut attaquer
+for (var i = 0; i < 613; i++) {
+	if (canUseWeaponOnCell(i) === true){
+		WeaponRange[j] = i;
+		j = j+1;
+	}
+}
+j=0;
+// Sélection de la meilleur cellule d'attaque
+// On regarde si on ne peut pas le toucher directement, si on peut le toucher indirectement
+if (canUseWeaponOnCell(Target) === false) {
+for (var i = 0; i < count(WeaponRange); i++) {
+	if (inArray(getWeaponEffectiveArea(WeaponRange), CmonEnnemi) === true) {
+		Targettmp[j] = WeaponRange[i]; /// On stock ses cellules pour ensuite choisir la plus proche de l'adversaire'
+		j=j+1;
+	}
+}
+// On choisi la cellule la plus proche de l'adversaire'
+Target = Targettmp[0];
+for (var i = 0; i < count(Targettmp); i++) {
+	if (getDistance(CmonEnnemi, Targettmp[i]) < getDistance(CmonEnnemi, Target)){
+		Target = Targettmp[i];
+	}
+}
+}
+// On regarde si on peut toucher plusieurs Ennemis qui ne sont pas des invocations
+for (var i = 0; i < count(WeaponRange); i++) {
+	if (inArray(getWeaponEffectiveArea(WeaponRange[i]), CmonEnnemi) === true and inArray(getWeaponEffectiveArea(WeaponRange[i]), CNearestNearestEnnemi) === true) {
+		Target = WeaponRange[i]; // La cible devient une des cellules possibles
+	}
+}
+if (Target !== null){
+useWeaponOnCell(Target); // On utilise l'arme sur la cellule cible si elle est différente de null
+}
+}
