@@ -1,0 +1,68 @@
+/// Attention ! pour inclure cette fonction de déplacement je vous conseil, soit de la modifier a votre convenance, soit
+/// de l'inclure dans un if (isInlineWeapon(getWeapon(ennemi)) === true) {
+	                              raprochementsafe(ennemi);
+                                }
+    parce que sinon, elle s'exécutera même si l'ennemi n'a pas d'arme qui tire en ligne, se qui mettra la pagaille dans vos
+    déplacements :) On lui fourni en paramètre x l'ennemi dont on veut se raprocher.
+
+function raprochementsafe(x){
+// Déclaration des tableaux
+var MoveMoi = [];
+var SafeMove = [];
+var MoveEnnemi = [];
+var TargetEnnemi = [];
+var j=0;
+// Déclaration des variables
+var moi = getLeek();
+var Cmoi = getCell();
+var Ennemi = x;
+var CEnnemi = getCell(Ennemi);
+var ArmeEnnemi = getWeapon(Ennemi);
+var MoveOn = null;
+// Cases ou peut bouger mon ennemi
+for (var i = 0; i < 613; i++) {
+	if(getPathLength(CEnnemi, i) <= getMP(Ennemi) and getPathLength(CEnnemi, i) !== null){
+		MoveEnnemi[j] = i;
+		j=j+1;
+	}
+}
+j=0;
+// Case ou je peut bouger
+for (var i = 0; i < 613; i++) {
+	if(getPathLength(Cmoi, i) <= getMP() and getPathLength(Cmoi, i) !== null){
+		MoveMoi[j]= i;
+		j=j+1;
+	}
+}
+j=0;
+// Toutes les cases sur lesquelles il pourra tirer au prochain tour
+for (var i = 0; i < count(MoveEnnemi); i++) {
+	for (var k = 0; k < 613; k++) {
+		if((lineOfSight(MoveEnnemi[i], k) === true) and getPathLength(MoveEnnemi[i], k) <= getWeaponMaxRange(ArmeEnnemi) and getPathLength(MoveEnnemi[i], k) >= getWeaponMinRange(ArmeEnnemi) and (getCellX(MoveEnnemi[i]) == getCellX(k) or getCellY(MoveEnnemi[i]) == getCellY(k))) {
+			TargetEnnemi[j] = k;
+			j = j+1;
+		}
+	}
+}
+j=0;
+// On retire de nos cases de déplacement les cases surlesquelles au prochain tour il nous marave notre tronche
+for (var i = 0; i < count(MoveMoi); i++) {
+	if (inArray(TargetEnnemi, MoveMoi[i]) === false){
+		SafeMove[j] = MoveMoi[i];
+		j=j+1;
+	}
+}
+// Parmis ses cases on va choisir la plus proche de notre ennemi
+MoveOn = SafeMove[0];
+for (var i = 0; i < count(SafeMove); i++) {
+	if (getDistance(CEnnemi, SafeMove[i]) < getDistance(CEnnemi, MoveOn)){
+		MoveOn = SafeMove[i];
+	}
+}
+// Maintenant on va bouger ! 
+if (MoveOn !== null){
+	moveTowardCell(MoveOn);
+} else {
+	moveToward(Ennemi);
+}
+}
