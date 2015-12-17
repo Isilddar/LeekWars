@@ -1,0 +1,51 @@
+/// Une petite fonction sympatique qui renvoit la case sur laquelle aller si on veut utiliser la puce Iceberg.
+/// Adaptable pour d'autres puces ou armes facilement, à noté que, si il n'y a aucune case ou l'on peut l'utiliser, elle renvera
+/// null, donc, faire attention a quand l'utiliser. je vous donne un exemple de son utilisation dans un de mes algo
+                                                          ////
+// Script de mouvement
+if (getCooldown(CHIP_ICEBERG) == 0 and Iceberg(monEnnemi) != null and distance > 4){
+	moveTowardCell(Iceberg(monEnnemi));
+	drapeau = 1; /// Ce drapeau est la pour que, plutard dans l'algo, on utilise iceberg
+} else {
+moveToward(monEnnemi);
+}
+                                                        ////
+
+function Iceberg(x) {
+// Déclaration des tableaux
+var Range = [];
+var j=0;
+var Positions = [];
+// Déclaration des variables
+var moi = getLeek();
+var Cmoi = getCell();
+var Ennemi = x;
+var CEnnemi = getCell(Ennemi);
+var distance;
+var Cible = null ;
+// Toutes les cellules ou je peut me déplacer
+for (var i = 0; i < 613; i++) {
+	if(getPathLength(Cmoi, i) <= getMP() and getPathLength(Cmoi, i) !== null){
+		Range[j]= i;
+		j=j+1;
+	}
+}
+j=0;
+/// Test sur toutes les cellules si l'ennemi est sur une colone/ligne a porté et en ligne de vue'
+for (var i = 0; i < count(Range); i++) {
+	distance = getDistance(Range[i], CEnnemi);
+	if((getCellX(Range[i]) == getCellX(CEnnemi) or getCellY(Range[i]) == getCellY(CEnnemi) ) and distance >= 3 and distance <= 5 and lineOfSight(Range[i], CEnnemi) === true) {
+	Positions[j] = Range[i];
+	j=j+1;
+	}
+}
+/// On cherche la cellule la plus proche de nous dans le tableau position
+Cible = Positions[0];
+for (var i = 0; i < count(Positions); i++) {
+	if(getDistance(Cmoi, Positions[i]) < getDistance(Cmoi, Cible)){
+		Cible = Positions[i];
+	}
+	}
+/// On a touver le cellule cible, alors on bouge vers elle et on attaque
+return Cible;
+}
