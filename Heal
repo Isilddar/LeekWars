@@ -1,0 +1,71 @@
+/// La fonction que j'utilise pour mes Heal et mes Boost et remplace le usechip(leek), vous fournissez en x la cible et en y 
+/// la puce de soin ou de boost choisi. et la fonction s'occupe de trouver le meilleur emplacement pour l'utiliser, selon ses
+/// critère : Aucun ennemis qui n'est pas une invocation ne doit être dans la zone d'effet si il y en a une, on privilégie
+/// le heal ou le boost sur plusieur allié, et enfin si la cible n'est pas a portée directe, on regarde si on peut l'atteindre
+/// avec la zone d'effet du sort
+/// Si vous avez des commentaires, n'hésitez pas a me MP :)
+
+
+function Heal(x, y) {
+// Déclaration des tableau
+var HealRange = [];
+var j = 0;
+var TousEnnemisA = getAliveEnemies();
+var TousEnnemis = [];
+var HealRangeWithoutEnnemi = [];
+var p = 0;
+// Déclaration des variables
+var moi = getLeek();
+var Ally = x;
+var Puce = y;
+var NearestAlly = getNearestAllyTo(Ally);
+var CAlly = getCell(Ally);
+var CNearestAlly = getCell(NearestAlly);
+var Target = null ;
+// Sélection des ennemis qui ne sont pas des invocations
+for (var i = 0; i < count(TousEnnemisA) ; i++) {
+	if (isSummon(TousEnnemisA[i]) === false){
+		TousEnnemis[j] = TousEnnemisA[i];
+		j=j+1;
+		}
+}
+j = 0;
+// Cases sur lesquelles je peut heal
+for (var i = 0; i < 613; i++) {
+	if (canUseChipOnCell(Puce, i) === true) {
+		HealRange[j] = i;
+		j = j+1;
+	}
+}
+// On copie le tableau obtenu dans un autre tableau
+for (var i = 0; i < count(HealRange); i++) {
+	HealRangeWithoutEnnemi[i] = HealRange[i];
+}
+// On enlève les case ou l'on touche des ennemis
+for (var i = 0; i < count(HealRange); i++) {
+	for (var a = 0; a < count(TousEnnemis) ; a++) {
+		var AreaChip = getChipEffectiveArea(Puce, HealRange[i]);
+		if (inArray(AreaChip, getCell(TousEnnemis[a])) === true) {
+			removeElement(HealRangeWithoutEnnemi, HealRange[i]);
+		}
+	}
+}
+// On regarde si on peut toucher deux Allié
+for (var i = 0; i < count(HealRangeWithoutEnnemi); i++) {
+	if (inArray(getChipEffectiveArea(Puce, HealRangeWithoutEnnemi[i]), CAlly) === true and inArray(getChipEffectiveArea(Puce, HealRangeWithoutEnnemi[i]), CNearestAlly) === true ) {
+		useChipOnCell(Puce, HealRangeWithoutEnnemi[i]);
+	}
+}
+// On regarde si je peut toucher la cible directement
+if (inArray(HealRangeWithoutEnnemi, CAlly) === true){
+	useChipOnCell(Puce, CAlly);
+}
+// On regarde si on peut toucher a coté
+if (canUseChipOnCell(Puce, CAlly) === false){
+	for (var i = 0; i < count(HealRangeWithoutEnnemi); i++) {
+		if (inArray(getChipEffectiveArea(Puce, HealRangeWithoutEnnemi[i]), CAlly) === true){
+			useChipOnCell(Puce, HealRangeWithoutEnnemi[i]);
+		}
+	}
+}
+}
