@@ -1,3 +1,5 @@
+/// Cette fonction sert a se raprocher d'un ennemi qui utilise une arme en ligne, de manière a préférer aller sur les cases
+/// ou il ne peut pas nous toucher.
 /// Attention ! pour inclure cette fonction de déplacement je vous conseil, soit de la modifier a votre convenance, soit
 /// de l'inclure dans un if (isInlineWeapon(getWeapon(ennemi)) === true) {
 	                              raprochementsafe(ennemi);
