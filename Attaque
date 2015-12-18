@@ -23,7 +23,7 @@ var Target = CmonEnnemi;
 for (var i = 0; i < 613; i++) {
 	if (canUseWeaponOnCell(i) === true){
 		WeaponRange[j] = i;
-		j = j+1;
+		j=j+1;
 	}
 }
 j=0;
@@ -31,8 +31,8 @@ j=0;
 // On regarde si on ne peut pas le toucher directement, si on peut le toucher indirectement
 if (canUseWeaponOnCell(Target) === false) {
 for (var i = 0; i < count(WeaponRange); i++) {
-	if (inArray(getWeaponEffectiveArea(WeaponRange), CmonEnnemi) === true) {
-		Targettmp[j] = WeaponRange[i]; /// On stock ses cellules pour ensuite choisir la plus proche de l'adversaire'
+	if (inArray(getWeaponEffectiveArea(WeaponRange[i]), CmonEnnemi) === true) {
+		Targettmp[j] = WeaponRange[i];
 		j=j+1;
 	}
 }
