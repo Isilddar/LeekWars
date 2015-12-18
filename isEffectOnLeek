@@ -1,0 +1,19 @@
+/// cette fonction renvoit true si l'effet de la puce " puce " est présent sur le poireau " leek " false sinon
+
+
+function isEffectOnLeek(leek, puce){
+/// déclaration des talbeaux
+var effets = getEffects(leek);
+var tmp = [];
+/// déclaration des variables
+var drapeau = false;
+// On Analyse le tableau 
+for (var i = 0; i < count(effets); i++) {
+tmp = effets[i];
+if (inArray(tmp, puce) === true) {
+	drapeau = true;
+}
+
+}
+return drapeau;
+}
