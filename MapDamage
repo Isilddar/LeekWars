@@ -1,0 +1,114 @@
+/// Cette fonction est utile pour les combats d'éleveur ou d'équipe si notre poireau utilise une arme de dégats de zone
+///, en effet elle va renvoyer la cellule dans notre porté totale ( porté de l'arme + nos PM ) qui, si on tire dessu avec notre
+/// notre arme équipée fera le plus de dégats aux ennemis, elle gerre aussi les dégats collateraux si des alliés sont dans la 
+/// zone d'effet. Elle va aussi renvoyer la cellule sur laquelle il faut aller pour pouvoir tirer dessus. En cas de litige
+/// elle renverra la position de tire la plus proche du poireau le plus proche ( modifiable en fonction de votre type d'IA, j'ai
+/// une IA bourrine donc faut que je me rapproche au CaC le plus vite possible ) 
+/// C'est encore en phase de test, elle est fonctionnelle mais renvoit des erreurs dans le rapport, j'essayerais de faire en sorte
+/// qu'elle ne le fasse plus :) 
+
+///                                   SI vous constatez des erreurs ou des bugs veuillez me les MP :)
+
+
+
+function MapDamage(Ennemi){
+/// Déclaration des tableaux
+var Rendre = [];
+var MoveRange = [];
+var PossiblePath = [];
+var WeaponRange = [];
+var j=0;
+var Allys = getAliveAllies();
+var AllysNotSummon = [];
+var DamageMap = [];
+for (var i = 0; i < count(Allys); i++) {
+	if (isSummon(Allys[i]) === false and Allys[i] != getLeek()) {
+		AllysNotSummon[j] = Allys[i];
+		j=j+1;
+	}
+}
+j=0;
+var Ennemis = getAliveEnemies();
+var TMP = [];
+/// Déclaration des variables
+var MoveOn = null;
+var weaponStats = getWeaponEffects(getWeapon());
+var weaponDamage = (weaponStats[0][2] + weaponStats[0][1]) / 2;
+var Cmoi = getCell();
+var MaxDamageCell = null;
+var Zone;
+/// Réglage de la zone d'effet'
+if (getWeaponArea(getWeapon()) === AREA_POINT) {
+	Zone = 0;
+}
+if (getWeaponArea(getWeapon()) === AREA_CIRCLE_1) {
+	Zone=1;
+}
+if (getWeaponArea(getWeapon()) === AREA_CIRCLE_2) {
+	Zone=2;
+}
+if (getWeaponArea(getWeapon()) === AREA_CIRCLE_3) {
+	Zone=3;
+}
+/// On stocke les cases ou l'on peut aller
+for (var i = 0; i < 613; i++) {
+	if (getPathLength(Cmoi, i) <= getMP() and getPathLength(Cmoi, i) !== null) {
+		MoveRange[j] = i;
+		j=j+1;
+	}
+}
+j=0;
+/// cellules que l'on peut vise
+for (var i = 0; i < count(MoveRange); i++) {
+	for (var k = 0; k < 613; k++) {
+		if (lineOfSight(MoveRange[i], k) === true and getDistance(MoveRange[i], k) >= getWeaponMinRange(getWeapon()) and getDistance(MoveRange[i], k) <= getWeaponMaxRange(getWeapon())) {
+			WeaponRange[j] = k;
+			j=j+1;
+		}
+	}
+}
+j=0;
+/// Analyse du nombre de cibles que l'on touche et si se sont des Alliées ou les ennemis et les dégats que l'on occasionne
+for (var i = 0; i < count(WeaponRange); i++) {
+	for (var k = 0; k < count(AllysNotSummon); k++) {
+		if (getDistance(getCell(AllysNotSummon[k]), WeaponRange[i]) <= Zone) {
+			DamageMap[i] = DamageMap[i]-((round(weaponDamage * (1 + getStrength() / 100)) * (1 - getRelativeShield(AllysNotSummon[k]) / 100) - getAbsoluteShield(AllysNotSummon[k]))*(100-(50*getDistance(getCell(AllysNotSummon[k]), WeaponRange[i]))/100)/100);
+		}
+	}
+}
+for (var i = 0; i < count(WeaponRange); i++) {
+	for (var k = 0; k < count(Ennemis) ; k++) {
+		if (getDistance(getCell(Ennemis[k]), WeaponRange[i]) <= Zone) {
+				DamageMap[i] = DamageMap[i]+((round(weaponDamage * (1 + getStrength() / 100)) * (1 - getRelativeShield(Ennemis[k]) / 100) - getAbsoluteShield(Ennemis[k]))*(100-(50*getDistance(getCell(Ennemis[k]), WeaponRange[i]))/100)/100);
+		}
+	}
+}
+/// On trouve la cellule ou l'on fait le plus de ratio dégatsAllié/dégatsEnnemis
+if ((arrayMax(DamageMap)) > 40) {
+MaxDamageCell=WeaponRange[search(DamageMap, arrayMax(DamageMap))];
+}
+/// On trouve les chemins pour être a la vue de la MaxDamageCell
+for (var i = 0; i < count(MoveRange) ; i++) {
+	if (lineOfSight(MoveRange[i], MaxDamageCell) and getDistance(MoveRange[i], MaxDamageCell) <= getWeaponMaxRange(getWeapon()) and  getDistance(MoveRange[i], MaxDamageCell) >= getWeaponMinRange(getWeapon())) {
+		PossiblePath[j]=MoveRange[i];
+		j=j+1;
+	}
+}
+j=0;
+/// On sélection la cellule la plus proche de l'adverssaire
+MoveOn = PossiblePath[0];
+for (var i = 0; i < count(PossiblePath); i++) {
+	if (getDistance(PossiblePath[i], getCell(getNearestEnemy())) < getDistance(MoveOn, getCell(getNearestEnemy()))){
+		MoveOn = PossiblePath[i];
+	}
+}
+// On retourne le résultat sous la forme d'un tableau avec [1]= la cellule ou l'on doit aller [2] = la cellule a ciblé
+if (MoveOn === null) {
+	MoveOn = getCell(getNearestEnemy());
+}
+Rendre[0]=MoveOn;
+Rendre[1]=WeaponRange[search(DamageMap, arrayMax(DamageMap))];
+/// Debug
+mark(MaxDamageCell, COLOR_BLUE);
+return Rendre;
+}
