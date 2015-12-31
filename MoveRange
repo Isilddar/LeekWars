@@ -1,0 +1,40 @@
+Cette fonction renvoit le tableau MoveOn des déplacements possibles du poireau leek. Au début je passait par un ballayage 
+entier des 613 cases et regardait lesquelles étaient à porté. Mais c'était un gaspillage d'opérations incroyable et au fils
+des niveaux, les opérations sont de plus en plus précieuses.. Je me suis donc creuser la tête pour trouver une méthode plus opti.
+Et voilà ! :) si vous en avez une n'hésiter pas à m'en faire part aussi, ça m'interesse :D
+
+function MoveRange(leek){
+var tmp;
+var MoveOn = [];
+var j=0;
+var Cmoi = getCell(leek);
+var CmoiX = getCellX(Cmoi);
+var CmoiY = getCellY(Cmoi);
+var MP = getMP(leek);
+var PathLenght = null;
+for (var i = 0; i <= MP; i++) {
+	for (var k = -i; k <= i ; k++) {
+	tmp =getCellFromXY(CmoiX+i-MP, CmoiY-k);
+	if (tmp !== null) {
+	PathLenght = getPathLength(tmp, Cmoi);
+		if(PathLenght <= MP and PathLenght !== null and isObstacle(tmp) !== true){
+			MoveOn[j]=tmp;
+			j=j+1;
+		}
+	}
+	}
+}
+for (var i = 0; i <= MP; i++) {
+	for (var k = -i; k <= i ; k++) {
+	tmp = getCellFromXY(CmoiX-i+MP, CmoiY+k);
+	if (tmp !== null) {
+	PathLenght = getPathLength(tmp, Cmoi);
+		if (PathLenght <= MP and PathLenght !== null and isObstacle(tmp) !== true){
+			MoveOn[j]=tmp;
+			j=j+1;
+		}
+	}
+	}
+}
+return MoveOn;
+}
