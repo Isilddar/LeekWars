@@ -1,6 +1,6 @@
 Attention, on à besoin de la fonction MoveRange ( ou de votre propre fonction qui sort un tableau des déplacements possibles
 d'un poirreau) 
-Encore au stade expérimental cette fonction est destinner a regarder les caces à couvert de tout les poirreau et bulbes ennemis
+Encore au stade expérimental cette fonction est destinné à regarder les caces à couvert de tout les poirreaux et bulbes ennemis
 présents sur la map. 
 Attention, bien que son cout en opération ne soit pas démentiel ( environ 130 000 ops par ennemis, basé sur 3pm par ennemis )
 même avec 2 ennemis sur la map, je ne dépasse pas les 20 000 000 ops, mais le script plante, pas l'IA, le script de mon navigateur
