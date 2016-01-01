@@ -1,0 +1,47 @@
+Attention, on à besoin de la fonction MoveRange ( ou de votre propre fonction qui sort un tableau des déplacements possibles
+d'un poirreau) 
+Encore au stade expérimental cette fonction est destinner a regarder les caces à couvert de tout les poirreau et bulbes ennemis
+présents sur la map. 
+Attention, bien que son cout en opération ne soit pas démentiel ( environ 130 000 ops par ennemis, basé sur 3pm par ennemis )
+même avec 2 ennemis sur la map, je ne dépasse pas les 20 000 000 ops, mais le script plante, pas l'IA, le script de mon navigateur
+carrément xD Essayez pour voir :)
+
+include("XMoveRange");
+/// Déclaration des tableaux
+var j=0;
+var k=0;
+var MoveEnnemiTMP = [];
+/// Déclaration des variables
+var moi = getLeek();
+var Cmoi = getCell();
+var MoveMoi = MoveRange(moi);
+var Ennemis = getAliveEnemies();
+/// 
+for (var i = 0; i < count(Ennemis) ; i++) {
+	MoveEnnemiTMP = MoveRange(Ennemis[i]);
+	while (MoveMoi[k] !== null) {
+			while (MoveEnnemiTMP[j] !== null) {
+				if (lineOfSight(MoveMoi[k], MoveEnnemiTMP[j], moi) === true and getDistance(MoveMoi[k], MoveEnnemiTMP[j]) <= 8 ) {
+			MoveMoi[k]=null;
+			}
+			j=j+1;
+		}
+		k=k+1;
+		j=0;
+	}
+	k=0;
+}
+///
+function pastrouverdenom(verif){
+	if (verif !== null) {
+		return true;
+	}else{
+		return false;
+	}
+}
+var MoveMoi2 = [];
+MoveMoi2 = arrayFilter(MoveMoi, pastrouverdenom);
+for (var i = 0; i < count(MoveMoi); i++) {
+	mark(MoveMoi[i], COLOR_BLUE);
+}
+debug(getOperations());
