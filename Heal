@@ -1,12 +1,12 @@
-/// La fonction que j'utilise pour mes Heal et mes Boost et remplace le usechip(leek), vous fournissez en x la cible et en y 
-/// la puce de soin ou de boost choisi. et la fonction s'occupe de trouver le meilleur emplacement pour l'utiliser, selon ses
-/// critère : Aucun ennemis qui n'est pas une invocation ne doit être dans la zone d'effet si il y en a une, on privilégie
-/// le heal ou le boost sur plusieur allié, et enfin si la cible n'est pas a portée directe, on regarde si on peut l'atteindre
-/// avec la zone d'effet du sort
-/// Si vous avez des commentaires, n'hésitez pas a me MP :)
+ La fonction que j'utilise pour mes Heal et mes Boost et remplace le usechip(leek), vous fournissez la cible et 
+ la puce de soin ou de boost choisi, et la fonction s'occupe de trouver le meilleur emplacement pour l'utiliser, selon ses
+ critère : Aucun ennemis qui n'est pas une invocation ne doit être dans la zone d'effet si il y en a une, on privilégie
+ le heal ou le boost sur plusieur allié, et enfin si la cible n'est pas a portée directe, on regarde si on peut l'atteindre
+ avec la zone d'effet du sort
+ Si vous avez des commentaires, n'hésitez pas a me MP :)
 
 
-function Heal(x, y) {
+function Heal(cible, puce) {
 // Déclaration des tableau
 var HealRange = [];
 var j = 0;
@@ -16,8 +16,8 @@ var HealRangeWithoutEnnemi = [];
 var p = 0;
 // Déclaration des variables
 var moi = getLeek();
-var Ally = x;
-var Puce = y;
+var Ally = cible;
+var Puce = puce;
 var NearestAlly = getNearestAllyTo(Ally);
 var CAlly = getCell(Ally);
 var CNearestAlly = getCell(NearestAlly);
